@@ -1,114 +1,119 @@
 <?php
+    namespace eNotasGW;
+
 	require('helper.php');
-	
-	require('exceptions/requestException.php');
-	require('exceptions/apiException.php');
-	require('exceptions/invalidApiKeyException.php');
-	require('exceptions/unauthorizedException.php');
 
-	require('apiBase.php');
-	require('nfeApiBase.php');
-	
-	require('empresaApi.php');
-	require('nfeServicoApi.php');
-	require('nfeProdutoApi.php');
-	require('nfeConsumidorApi.php');
-	require('prefeituraApi.php');
-	require('servicosMunicipaisApi.php');
+    require('exceptions/requestException.php');
+    require('exceptions/apiException.php');
+    require('exceptions/invalidApiKeyException.php');
+    require('exceptions/unauthorizedException.php');
 
-	require('fileParameter.php');
-	require('request.php');
-	require('response.php');
+    require('apiBase.php');
+    require('nfeApiBase.php');
 
-	require('proxy/proxyBase.php');
-	require('proxy/curlProxy.php');
+    require('empresaApi.php');
+    require('nfeServicoApi.php');
+    require('nfeProdutoApi.php');
+    require('nfeConsumidorApi.php');
+    require('prefeituraApi.php');
+    require('servicosMunicipaisApi.php');
 
-	require('media/formatters/formatterBase.php');
-	require('media/formatters/jsonFormatter.php');
-	require('media/formatters/formDataFormatter.php');
+    require('fileParameter.php');
+    require('request.php');
+    require('response.php');
 
-	use eNotasGW\Api as api;
-	use eNotasGW\Api\Proxy as proxy;
-	use eNotasGW\Api\Media\Formatters as formatters;  
+    require('proxy/proxyBase.php');
+    require('proxy/curlProxy.php');
 
-	class eNotasGW {
-		private static $_apiKey;
-		private static $_defaultContentType = 'application/json';
-		private static $_baseUrl = 'https://api.enotasgw.com.br';
-		private static $_version = '2';
-		private static $_versionedBaseUrl;
-		private static $_proxy;
-		private static $_formmaters;
-		private static $_trustedCAListPath;
+    require('media/formatters/formatterBase.php');
+    require('media/formatters/jsonFormatter.php');
+    require('media/formatters/formDataFormatter.php');
 
-		public static $EmpresaApi;
-		public static $NFeServicoApi;
-		public static $NFeProdutoApi;
-		public static $NFeConsumidorApi;
-		public static $PrefeituraApi;
-		public static $ServicosMunicipaisApi;
+    use eNotasGW\Api as api;
+    use eNotasGW\Api\Proxy as proxy;
+    use eNotasGW\Api\Media\Formatters as formatters;
 
-		public static function configure($config) {
-			$config = (object)$config;
+    class eNotasGW
+    {
+        private static $_apiKey;
+        private static $_defaultContentType = 'application/json';
+        private static $_baseUrl = 'https://api.enotasgw.com.br';
+        private static $_version = '2';
+        private static $_versionedBaseUrl;
+        private static $_proxy;
+        private static $_formmaters;
+        private static $_trustedCAListPath;
 
-			self::$_formmaters = array(
-				'application/json' => new formatters\jsonFormatter(),
-				'multipart/form-data' => new formatters\formDataFormatter()
-			);
+        public static $EmpresaApi;
+        public static $NFeServicoApi;
+        public static $NFeProdutoApi;
+        public static $NFeConsumidorApi;
+        public static $PrefeituraApi;
+        public static $ServicosMunicipaisApi;
 
-			if(!isset($config->apiKey)) {
-				throw new Exception('A api key deve ser definida no método configure.');
-			}
+        public static function configure($config)
+        {
+            $config = (object)$config;
 
-			self::$_apiKey = $config->apiKey;
+            self::$_formmaters = array(
+                'application/json' => new formatters\jsonFormatter(),
+                'multipart/form-data' => new formatters\formDataFormatter()
+            );
 
-			if(isset($config->baseUrl)) {
-				self::$_baseUrl = $config->baseUrl;
-			}
+            if (!isset($config->apiKey)) {
+                throw new Exception('A api key deve ser definida no método configure.');
+            }
 
-			if(isset($config->version)) {
-				self::$_version = $config->version;
-			}
+            self::$_apiKey = $config->apiKey;
 
-			if(isset($config->defaultContentType)) {
-				self::$_defaultContentType = $config->defaultContentType;
-			}
-			
-			if(isset($config->_trustedCAListPath)) {
-				self::$_trustedCAListPath = $config->_trustedCAListPath;
-			}
-			else {
-				self::$_trustedCAListPath = dirname(__FILE__) . '/files/ca-bundle.crt';
-			}
+            if (isset($config->baseUrl)) {
+                self::$_baseUrl = $config->baseUrl;
+            }
 
-			self::$_versionedBaseUrl = self::$_baseUrl . '/v' . self::$_version;
+            if (isset($config->version)) {
+                self::$_version = $config->version;
+            }
 
-			self::init();
-		}
+            if (isset($config->defaultContentType)) {
+                self::$_defaultContentType = $config->defaultContentType;
+            }
 
-		public static function getMediaFormatter($contentType) {
-			$contentType = explode(';', $contentType);
-			
-			return self::$_formmaters[$contentType[0]];
-		}
+            if (isset($config->_trustedCAListPath)) {
+                self::$_trustedCAListPath = $config->_trustedCAListPath;
+            } else {
+                self::$_trustedCAListPath = dirname(__FILE__) . '/files/ca-bundle.crt';
+            }
 
-		private static function init() {
-			self::$_proxy = self::createProxy();
-			self::$EmpresaApi = new api\empresaApi(self::$_proxy);
-			self::$NFeServicoApi = new api\nfeServicoApi(self::$_proxy);
-			self::$NFeProdutoApi = new api\nfeProdutoApi(self::$_proxy);
-			self::$NFeConsumidorApi = new api\nfeConsumidorApi(self::$_proxy);
-			self::$PrefeituraApi = new api\prefeituraApi(self::$_proxy);
-			self::$ServicosMunicipaisApi = new api\servicosMunicipaisApi(self::$_proxy);
-		}
+            self::$_versionedBaseUrl = self::$_baseUrl . '/v' . self::$_version;
 
-		private static function createProxy() {
-			return new proxy\curlProxy(array(
-			  'baseUrl' => self::$_versionedBaseUrl,
-			  'apiKey' => self::$_apiKey,
-			  'defaultContentType' => self::$_defaultContentType,
-			  'trustedCAListPath' => self::$_trustedCAListPath
-			));
-		}
-	}
-?>
+            self::init();
+        }
+
+        public static function getMediaFormatter($contentType)
+        {
+            $contentType = explode(';', $contentType);
+
+            return self::$_formmaters[$contentType[0]];
+        }
+
+        private static function init()
+        {
+            self::$_proxy = self::createProxy();
+            self::$EmpresaApi = new api\empresaApi(self::$_proxy);
+            self::$NFeServicoApi = new api\nfeServicoApi(self::$_proxy);
+            self::$NFeProdutoApi = new api\nfeProdutoApi(self::$_proxy);
+            self::$NFeConsumidorApi = new api\nfeConsumidorApi(self::$_proxy);
+            self::$PrefeituraApi = new api\prefeituraApi(self::$_proxy);
+            self::$ServicosMunicipaisApi = new api\servicosMunicipaisApi(self::$_proxy);
+        }
+
+        private static function createProxy()
+        {
+            return new proxy\curlProxy(array(
+              'baseUrl' => self::$_versionedBaseUrl,
+              'apiKey' => self::$_apiKey,
+              'defaultContentType' => self::$_defaultContentType,
+              'trustedCAListPath' => self::$_trustedCAListPath
+            ));
+        }
+    }
