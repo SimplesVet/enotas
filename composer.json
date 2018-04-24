@@ -1,0 +1,15 @@
+{
+    "name": "simplesvet/enotas",
+    "version": "2.0",
+    "description": "eNotasGW API",
+    "type": "package",
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "license": "mit",
+    "autoload": {
+        "psr-4": {
+            "eNotasGW\\": "src/"
+        }
+    }
+}
