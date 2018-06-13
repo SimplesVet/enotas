@@ -1,7 +1,7 @@
 <?php
 	namespace eNotasGW\Api;
-	
-	use \eNotasGW as eNotasGW;
+
+	use eNotasGW\eNotasGW as eNotasGW;
 
 	class response {
 		/**
@@ -44,8 +44,11 @@
 
 		private function decodeResponse() {
 			$formatter = eNotasGW::getMediaFormatter($this->contentType);
-			
-			return $formatter->decode($this->body);
+			if ($formatter) {
+				return $formatter->decode($this->body);
+			} else {
+				return $this->body;
+			}
 		}
 	}
 ?>

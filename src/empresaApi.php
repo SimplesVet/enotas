@@ -5,10 +5,29 @@
 		public function __construct($proxy) {
 			parent::__construct($proxy);
 		}
-		
+
+
 		/**
 		 * Insere ou atualiza uma empresa
-		 * 
+		 *
+		 * @param mixed $dados dados da empresa que a serem utilizados na inserção ou atualização
+		 */
+		public function consultar($idEmpresa)
+		{
+			return $this->callOperation(array(
+				'method' => 'GET',
+				'path' => '/empresas/{empresaId}',
+				'parameters' => array(
+					'path' => array(
+						'empresaId' => $idEmpresa
+					)
+				)
+			));
+		}
+
+		/**
+		 * Insere ou atualiza uma empresa
+		 *
 		 * @param mixed $dados dados da empresa que a serem utilizados na inserção ou atualização
 		 */
 		public function inserirAtualizar($dados) {
@@ -20,10 +39,10 @@
 				)
 			));
 		}
-		
+
 		/**
 		 * Atualiza a logo da empresa
-		 * 
+		 *
 		 * @param string $idEmpresa id da empresa para a qual a nota será emitida
 		 * @param fileParameter $file imagem a ser utilizada como logo.
 		 */
@@ -42,10 +61,10 @@
 				)
 			));
 		}
-		
+
 		/**
 		 * Atualiza o certificado digital da empresa
-		 * 
+		 *
 		 * @param string $idEmpresa id da empresa para a qual a nota será emitida
 		 * @param fileParameter $file arquivo do certificado.
 		 * @param string $pass senha do certificado.
