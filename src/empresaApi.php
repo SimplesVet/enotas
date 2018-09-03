@@ -28,18 +28,18 @@ class empresaApi extends eNotasGWApiBase
     }
 
     /**
-     * Listar empresa por sua Razão Social
+     * Listar empresa por CNPJ
      *
-     * @param string $razaoSocial
+     * @param string $cnpj
      */
-    public function consultarPorRazaoSocial($razaoSocial)
+    public function consultarPorCnpj($cnpj)
     {
         return $this->callOperation(array(
                 'method' => 'GET',
-                'path' => '/empresas?pageNumber=0&pageSize=1&searchBy=Razao_Social&searchTerm={razaoSocial}',
+                'path' => '/empresas?pageNumber=0&pageSize=1&searchTerm={cnpj}',
                 'parameters' => array(
                     'path' => array(
-                        'razaoSocial' => $razaoSocial
+                        'cnpj' => $cnpj
                     )
                 )
             ));
