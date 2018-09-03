@@ -1,6 +1,6 @@
 {
     "name": "simplesvet/enotas",
-    "version": "2.2",
+    "version": "2.3",
     "description": "eNotasGW API",
     "type": "package",
     "require": {
