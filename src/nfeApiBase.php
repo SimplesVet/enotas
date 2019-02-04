@@ -152,27 +152,6 @@ abstract class nfeApiBase extends eNotasGWApiBase
     }
 
     /**
-     * Download do xml de uma Nota Fiscal identificada pelo seu Identificador Único
-     *
-     * @param string $idEmpresa id da empresa para a qual a nota será emitida
-     * @param string $id Identificador Único da Nota Fiscal
-     * @return string xml da nota fiscal
-     */
-    public function downloadXmlCancelamentoPorIdExterno($idEmpresa, $id)
-    {
-        return $this->callOperation(array(
-                'path' => '/empresas/{empresaId}/{tipoNF}/porIdExterno/{id}/xmlCancelamento',
-                'parameters' => array(
-                    'path' => array(
-                        'empresaId' => $idEmpresa,
-                        'tipoNF' => $this->tipoNF,
-                        'id' => $id
-                    )
-                )
-            ));
-    }
-
-    /**
     * Download do pdf de uma Nota Fiscal identificada pelo seu id único
     *
     * @param string $idEmpresa id da empresa para a qual a nota será emitida
