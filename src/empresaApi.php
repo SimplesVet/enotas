@@ -108,4 +108,40 @@ class empresaApi extends eNotasGWApiBase
                 )
             ));
     }
+    
+    /**
+    * Download do exe para configurar o SAT
+    *
+    * @param string $idEmpresa id da empresa para a qual a nota será emitida
+    */
+    public function downloadExeSat($idEmpresa)
+    {
+        return $this->callOperation(array(
+            'method' => 'GET',
+            'path' =>  '/empresas/{empresaId}/sat/setup',
+            'parameters' => array(
+                'path' => array(
+                  'empresaId' => $idEmpresa
+                )
+            )
+        ));
+    }
+    
+    /**
+    * Obtem uma lista com os SAT`s cadastrados
+    *
+    * @param string $idEmpresa id da empresa para a qual a nota será emitida
+    */
+    public function listaSat($idEmpresa)
+    {
+        return $this->callOperation(array(
+            'method' => 'GET',
+            'path' =>  '/sat/{empresaId}/all',
+            'parameters' => array(
+                'path' => array(
+                  'empresaId' => $idEmpresa
+                )
+            )
+        ));
+    }
 }
