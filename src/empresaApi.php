@@ -1,5 +1,5 @@
 <?php
-    namespace eNotasGW\Api;
+namespace eNotasGW\Api;
 
 class empresaApi extends eNotasGWApiBase
 {
@@ -7,7 +7,6 @@ class empresaApi extends eNotasGWApiBase
     {
         parent::__construct($proxy);
     }
-
 
     /**
      * Consultar empresa por ID único
